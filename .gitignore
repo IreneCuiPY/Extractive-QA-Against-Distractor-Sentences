@@ -1,0 +1,20 @@
+# Python environment and cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Generated features and model checkpoints
+features/
+runs/
+checkpoint-*/
+*.safetensors
+*.pt
+*.pth
+*.bin
+
+# Local credentials
+.env
+.env.*
+!.env.example

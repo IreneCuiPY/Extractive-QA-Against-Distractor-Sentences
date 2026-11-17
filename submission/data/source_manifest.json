@@ -1,0 +1,112 @@
+[
+  {
+    "file": "references/course-project.html",
+    "url": "https://www.cis.upenn.edu/~myatskar/teaching/cis5300_fa26/term-project.html",
+    "status": 200,
+    "final_url": "https://www.cis.upenn.edu/~myatskar/teaching/cis5300_fa26/term-project.html",
+    "bytes": 41493,
+    "sha256": "437f1e5ac1b0cbb912cc3de4cf27d645fb0ee4b6091036009208c143774a93ac",
+    "last_modified": "Thu, 29 Oct 2026 19:56:44 GMT",
+    "etag": "\"a215-65f00143ec633\"",
+    "fetched_at_utc": "2026-11-02T00:26:41.169341+00:00"
+  },
+  {
+    "file": "references/D16-1264.pdf",
+    "url": "https://aclanthology.org/D16-1264.pdf",
+    "status": 200,
+    "final_url": "https://aclanthology.org/D16-1264.pdf",
+    "bytes": 404500,
+    "sha256": "476a94d1a414d2f5cedf42730b81dba4114d0cb8b637912ce585fb615209abc1",
+    "last_modified": "Thu, 27 Oct 2016 16:00:10 GMT",
+    "etag": "\"62c14-53fdad613ab50\"",
+    "fetched_at_utc": "2026-11-02T00:26:42.371034+00:00"
+  },
+  {
+    "file": "references/D17-1215.pdf",
+    "url": "https://aclanthology.org/D17-1215.pdf",
+    "status": 200,
+    "final_url": "https://aclanthology.org/D17-1215.pdf",
+    "bytes": 238135,
+    "sha256": "df1edeed43809fd6dd023a58504f731e20ff9af9f0c9e6d3c2ea2b31c8cb25a9",
+    "last_modified": "Sun, 03 Dec 2017 14:17:08 GMT",
+    "etag": "\"3a237-55f7041cbf6e3\"",
+    "fetched_at_utc": "2026-11-02T00:26:42.279590+00:00"
+  },
+  {
+    "file": "references/N18-2091.pdf",
+    "url": "https://aclanthology.org/N18-2091.pdf",
+    "status": 200,
+    "final_url": "https://aclanthology.org/N18-2091.pdf",
+    "bytes": 942026,
+    "sha256": "9bc7cefacc18888a285dfbd06d95241b131459229ffecb13f173ef687294e540",
+    "last_modified": "Sat, 19 May 2018 05:49:24 GMT",
+    "etag": "\"e5fca-56c88a1881090\"",
+    "fetched_at_utc": "2026-11-02T00:26:43.255123+00:00"
+  },
+  {
+    "file": "references/adversarial-squad-readme.md",
+    "url": "https://raw.githubusercontent.com/robinjia/adversarial-squad/master/README.md",
+    "status": 200,
+    "final_url": "https://raw.githubusercontent.com/robinjia/adversarial-squad/master/README.md",
+    "bytes": 1826,
+    "sha256": "1c6c22180d7db7713dc099f57db54bbca2cfe6d5931fb0945f92b37a34dd0c7d",
+    "last_modified": null,
+    "etag": "\"2966900034f50d1516d84d084c394e31d7247337291cdf3e7faf1731e115dad2\"",
+    "fetched_at_utc": "2026-11-02T00:26:40.426086+00:00"
+  },
+  {
+    "file": "references/squad-adversarial-loader.py.txt",
+    "url": "https://huggingface.co/datasets/stanfordnlp/squad_adversarial/raw/main/squad_adversarial.py",
+    "status": 200,
+    "final_url": "https://huggingface.co/datasets/stanfordnlp/squad_adversarial/raw/main/squad_adversarial.py",
+    "bytes": 5743,
+    "sha256": "7a5b38c329a515e951be59751e10dcfe754e111d869362e33d06070ad3bbd06a",
+    "last_modified": null,
+    "etag": "\"6b1fdb01e003ae334b55b7b58423f5ec86f7bbdf\"",
+    "fetched_at_utc": "2026-11-02T00:26:40.331192+00:00"
+  },
+  {
+    "file": "source_data/train-v1.1.json",
+    "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json",
+    "status": 200,
+    "final_url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json",
+    "bytes": 30288272,
+    "sha256": "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955",
+    "last_modified": "Fri, 13 Oct 2023 20:58:44 GMT",
+    "etag": "\"6529af84-1ce2990\"",
+    "fetched_at_utc": "2026-11-02T00:26:44.535080+00:00"
+  },
+  {
+    "file": "source_data/dev-v1.1.json",
+    "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json",
+    "status": 200,
+    "final_url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json",
+    "bytes": 4854279,
+    "sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+    "last_modified": "Fri, 13 Oct 2023 20:58:44 GMT",
+    "etag": "\"6529af84-4a1207\"",
+    "fetched_at_utc": "2026-11-02T00:26:42.220751+00:00"
+  },
+  {
+    "file": "source_data/addsent.json",
+    "url": "https://worksheets.codalab.org/rest/bundles/0xb765680b60c64d088f5daccac08b3905/contents/blob/",
+    "status": 200,
+    "final_url": "https://worksheets.codalab.org/rest/bundles/0xb765680b60c64d088f5daccac08b3905/contents/blob/",
+    "bytes": 4073864,
+    "sha256": "40e3602aa5195cdacd03904a9c301ceb17ccf730cc32bd3ab998b66b4401e660",
+    "last_modified": null,
+    "etag": null,
+    "fetched_at_utc": "2026-11-02T00:26:45.362269+00:00"
+  },
+  {
+    "file": "source_data/addonesent.json",
+    "url": "https://worksheets.codalab.org/rest/bundles/0x3ac9349d16ba4e7bb9b5920e3b1af393/contents/blob/",
+    "status": 200,
+    "final_url": "https://worksheets.codalab.org/rest/bundles/0x3ac9349d16ba4e7bb9b5920e3b1af393/contents/blob/",
+    "bytes": 1920649,
+    "sha256": "50420ac8d8b7547cd3715347c9a276802bc9466328ba0814adce4c20495e2889",
+    "last_modified": null,
+    "etag": null,
+    "fetched_at_utc": "2026-11-02T00:26:45.444399+00:00"
+  }
+]

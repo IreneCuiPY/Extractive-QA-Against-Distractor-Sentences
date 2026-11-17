@@ -1,0 +1,15 @@
+{
+  "id": "56df6bf35ca0a614008f99ff",
+  "original_id": "56df6bf35ca0a614008f99ff",
+  "title": "Christian",
+  "context": "In the past, the Malays used to call the Portuguese Serani from the Arabic Nasrani, but the term now refers to the modern Kristang creoles of Malaysia.",
+  "question": "What term did the Malays use for the Portuguese Serani?",
+  "answers": [
+    {
+      "answer_start": 75,
+      "text": "Nasrani"
+    }
+  ],
+  "variant": "clean",
+  "source": "squad_v1.1"
+}

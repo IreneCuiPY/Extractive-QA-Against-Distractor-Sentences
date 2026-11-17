@@ -1,0 +1,73 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.78in]{geometry}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\pagestyle{plain}
+
+\begin{document}
+\begin{center}
+{\Large\bfseries Robustness of Extractive QA Models\\Against Distractor Sentences}\par
+\vspace{4pt}
+{Irene Cui, Crystal Jin, Rita Wang}\par
+{CIS 5300 \quad Milestone 1 \quad November 2026}
+\end{center}
+\vspace{-6pt}
+
+\section*{Project question}
+Can data augmentation improve robustness to distractors without hurting clean QA accuracy? We will compare a lexical-overlap baseline and a fine-tuned DistilBERT model, then test whether training with varied distractors improves generalization across sentence templates and insertion positions.
+
+\section*{Related work}
+\textbf{Rajpurkar et al. (2016): SQuAD [1].}
+This paper introduces extractive reading comprehension with crowdwritten questions about Wikipedia passages. Each answer is a span in the passage, so systems must locate the relevant text rather than select from supplied answer choices. The authors compare a sliding-window baseline with logistic regression over candidate spans, using lexical overlap, answer-type, and dependency-path features. On the paper's SQuAD v1.0 test set, logistic regression reaches 51.0 F1, compared with 20.0 for the distance-enhanced sliding-window baseline and 86.8 for humans (Table 5). Performance falls as the syntax of the question diverges from the answer sentence, while human performance is more stable. This establishes our task and motivates Exact Match (EM) and token-level F1. It also suggests why lexical matching is a useful simple baseline. However, clean-set accuracy alone does not establish resistance to irrelevant sentences. Our experiments use the later SQuAD 1.1 release, so these historical scores are context rather than directly comparable targets.
+
+\textbf{Jia and Liang (2017): adversarial reading comprehension [2].}
+The authors test whether models still answer correctly after an irrelevant sentence is appended to a passage. AddSent alters entities, numbers, or other question words, inserts a type-matched fake answer, converts the result to a statement, and uses crowdworkers to edit and check it. It selects the candidate that produces the lowest model F1; AddOneSent instead chooses one candidate randomly without querying the model. Across sixteen systems, average F1 falls from 75.4 on clean questions to 36.4 under AddSent. Human AddOneSent performance falls much less, from 92.6 to 89.2. Training BiDAF with generated distractors raises AddSent F1 from 34.8 to 70.4, but yields only 39.2 on AddSentMod, which changes fake answers and prepends sentences (Table 6). This shows that robustness can depend on superficial properties of the attack. It motivates our paired evaluation and held-out template and position tests. The evaluated systems predate DistilBERT, so their score drops are hypotheses to revisit, not predictions for our model.
+
+\textbf{Wang and Bansal (2018): diverse adversarial training [3].}
+AddSentDiverse addresses the shortcuts left by fixed fake answers and sentence positions. It varies insertion locations and samples different fake answers of the same type from training data. Using BiDAF with self-attention and ELMo, this augmentation raises AddSent F1 from 42.45 to 76.95, while clean-development F1 decreases from 84.65 to 83.49. Adding WordNet synonym/antonym indicators alongside adversarial training yields 78.91 AddSent F1 and 84.49 clean F1 (Table 4). The combined gain is 36.46 F1 points, not a 36.46\% relative increase. These results support diversifying both placement and fake answers, while showing that augmentation alone does not automatically preserve clean accuracy. We will adapt this idea with a smaller rule-based generator and DistilBERT, rather than reproduce their architecture or semantic features. Our comparison will hold training steps and initialization fixed and measure both clean and adversarial performance.
+
+\newpage
+\section*{Collected data and split design}
+We downloaded SQuAD 1.1's public training and development JSON files from the authors' site, and AddSent and AddOneSent from Jia and Liang's CodaLab bundles. Records contain passages, questions, and answers with character offsets. Full prepared data, source URLs, checksums, and split assignments accompany this report in \texttt{data.tar.gz}; \texttt{data.md} documents the format and an actual training example.
+
+We split the 442 official training articles into 398 training and 44 development articles using a deterministic hash order with seed \texttt{5300-m1-2026}. All questions from an article stay together. The official development set becomes our project test set; its adversarial derivatives stay in that same partition. This gives approximately 80/9/11\% of the 98,169 public clean questions. Our project test set is not SQuAD's private official test set.
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Prepared file} & \textbf{Rows} & \textbf{Unique source questions}\\
+\midrule
+Training: clean & 78,349 & 78,349\\
+Development: clean & 9,250 & 9,250\\
+Test: clean & 10,570 & 10,570\\
+Test: AddSent candidates & 2,560 & 787\\
+Test: AddOneSent & 787 & 787\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{-5pt}
+The adversarial rows are alternate versions of test questions, not additional independent questions. Both upstream attack files include the same 1,000 clean examples; we store those once within the clean test file. Of those 1,000 questions, 787 have generated attacks and 213 have none. AddOneSent contains one selected candidate per attacked question; AddSent contains up to five.
+
+\textbf{Pairing and evaluation.}
+Each record retains its original question ID. We will report clean EM/F1 on all 10,570 test questions and paired robustness results on the 1,000-question adversarial cohort. Following the authors' evaluator, AddSent chooses the lowest-F1 attacked variant per question, with EM taken from that same variant; questions without an attack use the clean version. AddOneSent uses the supplied selected variant, with the same fallback. We will also identify any results restricted to the 787 attacked questions explicitly. Averaging all 2,560 candidate rows would overweight questions with more candidates and will not be our main result.
+
+\textbf{Validation and next steps.}
+Automated checks found zero cross-split overlap in article titles, original question IDs, or whitespace-normalized full contexts. Every answer offset reproduces its answer string, and every adversarial record matches its clean question and answers. Test processing has been limited to structural checks; no model has been trained or evaluated. Model selection will use our development partition. Custom augmentation has not yet been generated and is planned for M3. It will use training-only answer/entity pools, preserve split membership, and reserve predefined templates for evaluation. Generated distractors will need semantic, offset, and truncation checks.
+
+\vspace{-3pt}
+\section*{References}
+\small
+[1] Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016.
+\href{https://aclanthology.org/D16-1264/}{SQuAD: 100,000+ Questions for Machine Comprehension of Text.}
+\emph{EMNLP}, 2383--2392.
+
+[2] Robin Jia and Percy Liang. 2017.
+\href{https://aclanthology.org/D17-1215/}{Adversarial Examples for Evaluating Reading Comprehension Systems.}
+\emph{EMNLP}, 2021--2031.
+
+[3] Yicheng Wang and Mohit Bansal. 2018.
+\href{https://aclanthology.org/N18-2091/}{Robust Machine Comprehension Models via Adversarial Training.}
+\emph{NAACL-HLT}, Volume 2, 575--581.
+\end{document}
