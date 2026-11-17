@@ -146,12 +146,65 @@ These are verification examples, not baseline performance results.
 We also verified normalization, repeated-token overlap, zero overlap,
 and rejection of missing predictions.
 
-## Scope
+## Adversarial evaluation (AddSent / AddOneSent)
 
-The current evaluator computes per-question scores for clean data.
-It does not implement grouped adversarial evaluation. AddSent variants
-must not be averaged as independent original questions when reporting
-the grouped attack results.
+`score-adversarial.py` implements the grouped evaluation of Jia and Liang
+(2017). AddSent has up to five attacked candidates per question, so the
+candidates must not be averaged as independent questions.
+
+Let C be the 1,000-question adversarial cohort (`adversarial_cohort_ids`
+in `split_manifest.json`) and A_i the attacked candidates for question i,
+in file order. A_i is empty for 213 questions with no attack. Let
+a_i* be the candidate in A_i with the lowest F1, keeping the first
+candidate on ties. The adversarial scores are:
+
+Adv-F1 = (100 / |C|) × sum over i in C of F1_i(a_i*),
+with F1_i(a_i*) replaced by the clean F1_i when A_i is empty.
+
+Adv-EM uses the EM of the same selected candidate a_i*, not the
+lowest EM. The clean prediction never competes with attacked candidates.
+AddOneSent has one candidate per attacked question, so a_i* is that
+candidate.
+
+The script also reports:
+
+- Clean EM/F1 on the same 1,000-question cohort, for a paired comparison.
+- An `attacked_only` block restricted to the 787 attacked questions.
+- `distractor_pick_rate`: among the 787 attacked questions, the share whose
+  selected prediction appears only in the inserted distractor sentence.
+  This is a text-match approximation. It does not use token offsets.
+
+We checked this script against a Python 3 port of the authors' evaluator
+(`references/upstream_eval_squad.py.txt`) run on the raw AddSent and
+AddOneSent JSON files. Both gave identical scores for the simple baseline.
+
+```bash
+python3 score-adversarial.py \
+  --clean-predictions predictions/simple-test.json \
+  --adv-gold submission/data/test/addsent.jsonl \
+  --adv-predictions predictions/simple-addsent.json
+```
+
+Example output (simple baseline, AddSent):
+
+```json
+{
+  "condition": "addsent",
+  "cohort_questions": 1000,
+  "clean_exact_match": 0.5,
+  "clean_f1": 18.599340325650168,
+  "adversarial_exact_match": 0.4,
+  "adversarial_f1": 13.706466374685503,
+  "attacked_only": {
+    "questions": 787,
+    "clean_exact_match": 0.12706480304955528,
+    "clean_f1": 17.72982412591085,
+    "adversarial_exact_match": 0.0,
+    "adversarial_f1": 11.51270347665459,
+    "distractor_pick_rate": 45.23506988564168
+  }
+}
+```
 
 ## References
 
@@ -162,3 +215,11 @@ https://aclanthology.org/D16-1264/
 
 Official SQuAD 1.1 evaluation script:
 https://github.com/rajpurkar/SQuAD-explorer/blob/master/evaluate-v1.1.py
+
+Jia, R. and Liang, P. (2017).
+Adversarial Examples for Evaluating Reading Comprehension Systems.
+Proceedings of EMNLP.
+https://aclanthology.org/D17-1215/
+
+Adversarial evaluator:
+https://github.com/robinjia/adversarial-squad/blob/master/src/py/eval_squad.py

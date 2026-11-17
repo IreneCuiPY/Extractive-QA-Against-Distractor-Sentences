@@ -80,6 +80,42 @@ percentages from 0 to 100.
 
 The baseline rules were fixed before clean test evaluation.
 
+Clean test scores exceed development scores partly because clean test
+has about three reference answers per question and development has one
+(see `strong-baseline.md`).
+
+### Adversarial results
+
+Adversarial predictions and evaluation:
+
+```bash
+for condition in addsent addonesent; do
+  python3 simple-baseline.py \
+    --input submission/data/test/$condition.jsonl \
+    --output predictions/simple-$condition.json
+
+  python3 score-adversarial.py \
+    --clean-predictions predictions/simple-test.json \
+    --adv-gold submission/data/test/$condition.jsonl \
+    --adv-predictions predictions/simple-$condition.json
+done
+```
+
+The 1,000-question adversarial cohort, scored as described in `scoring.md`:
+
+| Condition | Questions | Clean EM | Clean F1 | Adversarial EM | Adversarial F1 | Distractor picked |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| AddSent | 1,000 | 0.50 | 18.60 | 0.40 | 13.71 | — |
+| AddOneSent | 1,000 | 0.50 | 18.60 | 0.40 | 15.51 | — |
+| AddSent, attacked only | 787 | 0.13 | 17.73 | 0.00 | 11.51 | 45.2% |
+| AddOneSent, attacked only | 787 | 0.13 | 17.73 | 0.00 | 13.80 | 37.9% |
+
+"Distractor picked" is the share of attacked questions where the selected
+attacked prediction appears only in the inserted sentence. The baseline
+returns the distractor sentence for 45.2% of attacked questions under
+AddSent and 37.9% under AddOneSent. This is the expected failure mode:
+distractors are written to share many words with the question.
+
 ## Limitations
 
 The baseline selects whole sentences rather than precise answer spans.
@@ -91,5 +127,7 @@ sentence containing question words may receive a high score.
 The punctuation-based sentence splitter can also split incorrectly
 around abbreviations.
 
-These results cover clean data only. Adversarial evaluation has not
-yet been performed.
+The proposal described a richer simple baseline that extracts a
+location, date, or person entity from the selected sentence for
+where/when/who questions. The implemented version returns the whole
+sentence, which keeps it dependency-free but leaves EM near zero.

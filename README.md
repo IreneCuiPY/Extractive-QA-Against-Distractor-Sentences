@@ -1,45 +1,74 @@
-# CIS 5300 Milestone 1 working package
+# Robustness of Extractive QA Against Distractor Sentences
 
-Prepared November 1, 2026 from the approved three-author proposal.
+CIS 5300 term project (Irene Cui, Crystal Jin, Rita Wang).
 
-The [current course page](https://www.cis.upenn.edu/~myatskar/teaching/cis5300_fa26/term-project.html) lists **November 4, 2026** for M1 and requires a scheduled mentor meeting, a report of at most two pages covering three papers and collected data, `data.md`, and a gzipped data archive. The page gives no M1 time of day.
+We study whether extractive QA models trained on SQuAD 1.1 are misled by
+distractor sentences (Jia and Liang, 2017), and whether training on
+distractor-augmented data with a hard-negative objective improves
+robustness without hurting clean accuracy.
 
-## Files to review and submit
+## Milestone 2 deliverables
 
-`submission/` contains:
+| File | Purpose |
+| --- | --- |
+| `milestone2.pdf` | Milestone 2 report |
+| `score.py`, `scoring.md` | SQuAD 1.1 EM / F1 evaluator and metric definition |
+| `score-adversarial.py` | Grouped AddSent / AddOneSent evaluation (see `scoring.md`) |
+| `simple-baseline.py`, `simple-baseline.md` | Lexical-overlap sentence selection |
+| `prepare-features.py`, `train-strong.py`, `predict-strong.py`, `strong-baseline.md` | Fine-tuned DistilBERT |
+| `check-tokenization.py` | Checks that every training answer aligns to tokens |
+| `predictions/` | Baseline predictions |
 
-- `milestone1.pdf`: two-page report with three paper reviews and the data description.
-- `milestone1.tex`: editable source for the same report.
-- `data.md`: source links, exact counts, schema, real example, split and evaluation details.
-- `data.tar.gz`: the complete prepared data and manifests; no sample-only substitution.
-- `data/`: the unpacked copy for local use.
+Milestone 1 materials (report, `data.md`, data archive, preparation
+scripts) are in `submission/`, `scripts/`, and `references/`.
 
-The source proposal has not been changed. No files have been uploaded or submitted, and no mentor has been contacted.
-
-## Remaining team actions
-
-1. Review the three summaries and confirm they reflect the team's reading and intended approach.
-2. Confirm/schedule the mentor meeting. No meeting details were supplied, so the report makes no claim that one is scheduled. Discuss the scope of the two extensions and the M2 evaluation wording with the mentor: the proposal reserves the project test set for final evaluation, while the generic M2 instructions request baseline test scores. Do not tune on test scores either way.
-3. Submit the PDF, `data.md`, and `data.tar.gz` through the course's normal process. The `.tex` is the editable companion.
-
-## Reproducibility
-
-The scripts use Python's standard library. From this directory:
+## Setup
 
 ```sh
-python3 scripts/fetch_sources.py
-python3 scripts/prepare_data.py
-python3 scripts/package_data.py
+pip install -r requirements.txt
 ```
 
-The first command uses the network and records current source hashes. For exact reconstruction of this prepared release, retain the downloaded `source_data/` files and recorded `references/source_manifest.json`; the preparation script checks those hashes before processing. Do not refresh sources and silently call a different release identical.
-
-To compile the report with a TeX installation:
+The training split (82 MB) is only stored inside the data archive.
+Extract it before preparing features:
 
 ```sh
-tectonic --outdir submission submission/milestone1.tex
+tar -xzf submission/data.tar.gz -C submission data/train/clean.jsonl
 ```
 
-The actual build was compiled and visually reviewed. `references/` contains the three papers, source text, course-page snapshot, upstream documentation/evaluator, and fetch manifest. `source_data/` preserves the four unmodified data downloads. `submission/data/validation.json` records checks over the full prepared corpus.
+## Reproducing results
 
-No model training, test inference, automatic submission, or custom augmentation was performed for this milestone. M2 implements baselines/scoring; M3 generates custom augmentation.
+Run all commands from the repository root.
+
+Simple baseline on clean test:
+
+```sh
+python3 simple-baseline.py --input submission/data/test/clean.jsonl \
+  --output predictions/simple-test.json
+python3 score.py --gold submission/data/test/clean.jsonl \
+  --predictions predictions/simple-test.json
+```
+
+Strong baseline: see `strong-baseline.md` for feature preparation,
+training, prediction, and evaluation.
+
+Adversarial evaluation of any system's predictions:
+
+```sh
+python3 score-adversarial.py \
+  --clean-predictions predictions/simple-test.json \
+  --adv-gold submission/data/test/addsent.jsonl \
+  --adv-predictions predictions/simple-addsent.json
+```
+
+## Results so far
+
+EM / F1 (%). AddSent and AddOneSent use the 1,000-question adversarial
+cohort, so their clean column is the clean score on those same 1,000 questions.
+
+| Method | Dev (9,250) | Clean test (10,570) | Cohort clean (1,000) | AddSent | AddOneSent |
+| --- | --- | --- | --- | --- | --- |
+| Lexical overlap | 0.13 / 15.28 | 0.22 / 18.70 | 0.50 / 18.60 | 0.40 / 13.71 | 0.40 / 15.51 |
+| DistilBERT | 67.05 / 79.63 | 76.26 / 84.70 | not run | not run | not run |
+
+DistilBERT adversarial results need the trained checkpoint, which is not
+stored in this repository.

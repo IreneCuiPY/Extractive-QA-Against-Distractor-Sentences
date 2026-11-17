@@ -77,7 +77,7 @@ for both development and clean test predictions.
 
 ## Prediction method
 
-`predict_strong.py` uses only the question and context.
+`predict-strong.py` uses only the question and context.
 Reference answers and answer offsets are not used during prediction.
 
 Prediction uses the same maximum sequence length and context overlap
@@ -119,7 +119,7 @@ python prepare-features.py
 ### Train
 
 ```bash
-python train_strong.py \
+python train-strong.py \
   --train-features features/train \
   --dev-features features/validation \
   --output-dir runs/distilbert-baseline
@@ -128,7 +128,7 @@ python train_strong.py \
 To resume from a saved checkpoint:
 
 ```bash
-python train_strong.py \
+python train-strong.py \
   --train-features features/train \
   --dev-features features/validation \
   --resume-from-checkpoint checkpoint-500 \
@@ -141,7 +141,7 @@ The commands below assume the selected checkpoint has been placed at
 `runs/distilbert-baseline-colab/checkpoint-8500`.
 
 ```bash
-python predict_strong.py \
+python predict-strong.py \
   --model runs/distilbert-baseline-colab/checkpoint-8500 \
   --input submission/data/dev/clean.jsonl \
   --output predictions/strong-dev.json
@@ -158,7 +158,7 @@ python score.py \
 ### Generate clean test predictions
 
 ```bash
-python predict_strong.py \
+python predict-strong.py \
   --model runs/distilbert-baseline-colab/checkpoint-8500 \
   --input submission/data/test/clean.jsonl \
   --output predictions/strong-test.json
@@ -175,6 +175,26 @@ python score.py \
 The prediction script automatically selects CUDA, MPS, or CPU.
 A device can also be specified using `--device`.
 
+### Adversarial evaluation (AddSent / AddOneSent)
+
+`predict-strong.py` works on any prepared JSONL file, including the
+attacked rows. `score-adversarial.py` then groups them by original
+question, as described in `scoring.md`:
+
+```bash
+for condition in addsent addonesent; do
+  python predict-strong.py \
+    --model runs/distilbert-baseline-colab/checkpoint-8500 \
+    --input submission/data/test/$condition.jsonl \
+    --output predictions/strong-$condition.json
+
+  python score-adversarial.py \
+    --clean-predictions predictions/strong-test.json \
+    --adv-gold submission/data/test/$condition.jsonl \
+    --adv-predictions predictions/strong-$condition.json
+done
+```
+
 ## Results
 
 Scores use SQuAD 1.1 Exact Match and token-level F1, expressed
@@ -190,9 +210,33 @@ as percentages from 0 to 100. See `scoring.md` for definitions.
 DistilBERT substantially outperforms the simple baseline on both splits.
 Unlike whole-sentence selection, it predicts a specific answer span.
 
+### Comparison with the published result
+
+Our clean test split is the official SQuAD 1.1 development set, the same
+evaluation set that Sanh et al. (2019, Table 2) use for DistilBERT.
+
+| Model | Training questions | EM (%) | F1 (%) |
+| --- | ---: | ---: | ---: |
+| DistilBERT, Sanh et al. (2019) | 87,599 | 77.7 | 85.8 |
+| DistilBERT, ours | 78,349 | 76.26 | 84.70 |
+
+Our model is 1.4 EM / 1.1 F1 below the published result. Our training set
+has about 11% fewer questions, because 44 training articles are held out
+as our development split. We also ran a single seed with no
+hyperparameter search.
+
+### Why clean test scores exceed development scores
+
 Clean test scores are higher than development scores for both methods.
-These results describe the two evaluated splits; they do not establish
-why their difficulty differs.
+A likely contributor is the number of reference answers. Our development
+split comes from the official SQuAD training file, which has exactly one
+reference per question. Clean test comes from the official development
+file, which averages 3.29 references (1.70 distinct strings) per question.
+EM and F1 take the maximum over references, so extra references raise
+scores. Scoring the simple baseline's clean test predictions against only
+the first reference lowers its F1 from 18.70 to 15.99, close to its
+development F1 of 15.28. Development scores should therefore only be
+compared with other development scores.
 
 ## Environment
 
@@ -218,9 +262,8 @@ Predictions are limited to contiguous context spans of at most
 30 tokens. The model may still rely on lexical overlap and may be
 sensitive to misleading distractor sentences.
 
-This report covers clean-data evaluation only. Adversarial AddSent
-and AddOneSent evaluation and conditional robustness retention
-are not included in these results.
+The adversarial evaluation commands above have not yet been run for
+DistilBERT, so this document reports clean-data results only.
 
 ## References
 

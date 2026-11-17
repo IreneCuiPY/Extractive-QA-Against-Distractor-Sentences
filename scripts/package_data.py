@@ -11,6 +11,13 @@ SUBMISSION = ROOT / 'submission'
 DATA = SUBMISSION / 'data'
 
 def main():
+    required = ['train/clean.jsonl', 'dev/clean.jsonl', 'test/clean.jsonl',
+                'test/addsent.jsonl', 'test/addonesent.jsonl']
+    missing = [name for name in required if not (DATA/name).is_file()]
+    if missing:
+        # Without this check, a fresh clone would overwrite data.tar.gz without the training split.
+        raise FileNotFoundError(f'Missing prepared files {missing}. Extract submission/data.tar.gz '
+                                'or run scripts/prepare_data.py first.')
     shutil.copyfile(SUBMISSION/'data.md', DATA/'data.md')
     files = sorted(p for p in DATA.rglob('*') if p.is_file())
     target = SUBMISSION / 'data.tar.gz'
