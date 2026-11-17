@@ -44,25 +44,25 @@ Run from the project root.
 Development predictions and evaluation:
 
 ```bash
-python3 simple-baseline.py \
-  --input submission/data/dev/clean.jsonl \
-  --output predictions/simple-dev.json
+python3 code/simple-baseline.py \
+  --input data/dev/clean.jsonl \
+  --output output/predictions/simple-dev.json
 
-python3 score.py \
-  --gold submission/data/dev/clean.jsonl \
-  --predictions predictions/simple-dev.json
+python3 code/score.py \
+  --gold data/dev/clean.jsonl \
+  --predictions output/predictions/simple-dev.json
 ```
 
 Clean test predictions and evaluation:
 
 ```bash
-python3 simple-baseline.py \
-  --input submission/data/test/clean.jsonl \
-  --output predictions/simple-test.json
+python3 code/simple-baseline.py \
+  --input data/test/clean.jsonl \
+  --output output/predictions/simple-test.json
 
-python3 score.py \
-  --gold submission/data/test/clean.jsonl \
-  --predictions predictions/simple-test.json
+python3 code/score.py \
+  --gold data/test/clean.jsonl \
+  --predictions output/predictions/simple-test.json
 ```
 
 The implementation uses only Python's standard library and imports
@@ -90,14 +90,14 @@ Adversarial predictions and evaluation:
 
 ```bash
 for condition in addsent addonesent; do
-  python3 simple-baseline.py \
-    --input submission/data/test/$condition.jsonl \
-    --output predictions/simple-$condition.json
+  python3 code/simple-baseline.py \
+    --input data/test/$condition.jsonl \
+    --output output/predictions/simple-$condition.json
 
-  python3 score-adversarial.py \
-    --clean-predictions predictions/simple-test.json \
-    --adv-gold submission/data/test/$condition.jsonl \
-    --adv-predictions predictions/simple-$condition.json
+  python3 code/score-adversarial.py \
+    --clean-predictions output/predictions/simple-test.json \
+    --adv-gold data/test/$condition.jsonl \
+    --adv-predictions output/predictions/simple-$condition.json
 done
 ```
 

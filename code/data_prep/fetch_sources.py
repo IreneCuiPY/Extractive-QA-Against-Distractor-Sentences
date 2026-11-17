@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import urllib.request
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 SOURCES = {
     'references/course-project.html': 'https://www.cis.upenn.edu/~myatskar/teaching/cis5300_fa26/term-project.html',
     'references/D16-1264.pdf': 'https://aclanthology.org/D16-1264.pdf',
@@ -14,10 +14,10 @@ SOURCES = {
     'references/N18-2091.pdf': 'https://aclanthology.org/N18-2091.pdf',
     'references/adversarial-squad-readme.md': 'https://raw.githubusercontent.com/robinjia/adversarial-squad/master/README.md',
     'references/squad-adversarial-loader.py.txt': 'https://huggingface.co/datasets/stanfordnlp/squad_adversarial/raw/main/squad_adversarial.py',
-    'source_data/train-v1.1.json': 'https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json',
-    'source_data/dev-v1.1.json': 'https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json',
-    'source_data/addsent.json': 'https://worksheets.codalab.org/rest/bundles/0xb765680b60c64d088f5daccac08b3905/contents/blob/',
-    'source_data/addonesent.json': 'https://worksheets.codalab.org/rest/bundles/0x3ac9349d16ba4e7bb9b5920e3b1af393/contents/blob/',
+    'data/raw/train-v1.1.json': 'https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json',
+    'data/raw/dev-v1.1.json': 'https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json',
+    'data/raw/addsent.json': 'https://worksheets.codalab.org/rest/bundles/0xb765680b60c64d088f5daccac08b3905/contents/blob/',
+    'data/raw/addonesent.json': 'https://worksheets.codalab.org/rest/bundles/0x3ac9349d16ba4e7bb9b5920e3b1af393/contents/blob/',
 }
 
 def fetch(item):

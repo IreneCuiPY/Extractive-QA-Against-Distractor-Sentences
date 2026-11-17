@@ -3,24 +3,24 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
-import shutil
 import tarfile
 
-ROOT = Path(__file__).resolve().parents[1]
-SUBMISSION = ROOT / 'submission'
-DATA = SUBMISSION / 'data'
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / 'data'
+TARGET = ROOT / 'milestones' / 'm1' / 'data.tar.gz'
+# The M1 archive contents. data/README.md and data/raw/ are not packaged.
+MEMBERS = ['data.md', 'source_manifest.json', 'split_manifest.json', 'validation.json',
+           'train/clean.jsonl', 'dev/clean.jsonl', 'test/clean.jsonl',
+           'test/addsent.jsonl', 'test/addonesent.jsonl']
 
 def main():
-    required = ['train/clean.jsonl', 'dev/clean.jsonl', 'test/clean.jsonl',
-                'test/addsent.jsonl', 'test/addonesent.jsonl']
-    missing = [name for name in required if not (DATA/name).is_file()]
+    missing = [name for name in MEMBERS if not (DATA/name).is_file()]
     if missing:
         # Without this check, a fresh clone would overwrite data.tar.gz without the training split.
-        raise FileNotFoundError(f'Missing prepared files {missing}. Extract submission/data.tar.gz '
-                                'or run scripts/prepare_data.py first.')
-    shutil.copyfile(SUBMISSION/'data.md', DATA/'data.md')
-    files = sorted(p for p in DATA.rglob('*') if p.is_file())
-    target = SUBMISSION / 'data.tar.gz'
+        raise FileNotFoundError(f'Missing prepared files {missing}. Extract milestones/m1/data.tar.gz '
+                                'or run code/data_prep/prepare_data.py first.')
+    files = sorted(DATA/name for name in MEMBERS)
+    target = TARGET
     # Fixed metadata gives byte-identical archives for unchanged inputs.
     with target.open('wb') as output:
         with gzip.GzipFile(filename='', mode='wb', fileobj=output, mtime=0) as gz:
@@ -33,7 +33,7 @@ def main():
                     info.mtime = 0
                     with path.open('rb') as source:
                         tar.addfile(info,source)
-    expected = {str(p.relative_to(SUBMISSION)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    expected = {'data/'+str(p.relative_to(DATA)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     with tarfile.open(target,'r:gz') as tar:
         assert set(tar.getnames()) == set(expected)
         for member in tar.getmembers():

@@ -16,7 +16,7 @@ def main():
     failed = []
 
     with open(
-        "submission/data/train/clean.jsonl", encoding="utf-8"
+        "data/train/clean.jsonl", encoding="utf-8"
     ) as stream:
         for line in stream:
             if not line.strip():

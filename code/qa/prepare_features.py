@@ -13,8 +13,8 @@ def main():
     assert tokenizer.is_fast
 
     data_files = {
-        "train": "submission/data/train/clean.jsonl",
-        "validation": "submission/data/dev/clean.jsonl",
+        "train": "data/train/clean.jsonl",
+        "validation": "data/dev/clean.jsonl",
     }
 
     datasets = load_dataset("json", data_files=data_files)

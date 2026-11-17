@@ -7,58 +7,43 @@ distractor sentences (Jia and Liang, 2017), and whether training on
 distractor-augmented data with a hard-negative objective improves
 robustness without hurting clean accuracy.
 
-## Milestone 2 deliverables
+## Repository layout
 
-| File | Purpose |
-| --- | --- |
-| `milestone2.pdf` | Milestone 2 report |
-| `score.py`, `scoring.md` | SQuAD 1.1 EM / F1 evaluator and metric definition |
-| `score-adversarial.py` | Grouped AddSent / AddOneSent evaluation (see `scoring.md`) |
-| `simple-baseline.py`, `simple-baseline.md` | Lexical-overlap sentence selection |
-| `prepare-features.py`, `train-strong.py`, `predict-strong.py`, `strong-baseline.md` | Fine-tuned DistilBERT |
-| `check-tokenization.py` | Checks that every training answer aligns to tokens |
-| `predictions/` | Baseline predictions |
-
-Milestone 1 materials (report, `data.md`, data archive, preparation
-scripts) are in `submission/`, `scripts/`, and `references/`.
-
-## Setup
-
-```sh
-pip install -r requirements.txt
+```text
+code/          evaluation, baselines, and data preparation (code/README.md)
+  qa/          DistilBERT feature preparation, training, and prediction
+  data_prep/   download, split, and package the data
+data/          prepared train/dev/test splits and raw downloads (data/README.md)
+output/        system predictions and how to score them (output/README.md)
+milestones/    submitted reports and deliverables, one folder per milestone
+references/    papers, source snapshots, and validation records
 ```
 
-The training split (82 MB) is only stored inside the data archive.
-Extract it before preparing features:
-
-```sh
-tar -xzf submission/data.tar.gz -C submission data/train/clean.jsonl
-```
-
-## Reproducing results
+## Quick start
 
 Run all commands from the repository root.
 
-Simple baseline on clean test:
-
 ```sh
-python3 simple-baseline.py --input submission/data/test/clean.jsonl \
-  --output predictions/simple-test.json
-python3 score.py --gold submission/data/test/clean.jsonl \
-  --predictions predictions/simple-test.json
+pip install -r requirements.txt
+tar -xzf milestones/m1/data.tar.gz data/train/clean.jsonl   # training split
+
+python3 code/simple-baseline.py --input data/test/clean.jsonl \
+  --output output/predictions/simple-test.json
+python3 code/score.py --gold data/test/clean.jsonl \
+  --predictions output/predictions/simple-test.json
 ```
 
-Strong baseline: see `strong-baseline.md` for feature preparation,
-training, prediction, and evaluation.
+`code/README.md` lists the commands that reproduce every result.
 
-Adversarial evaluation of any system's predictions:
+## Milestone 2 deliverables
 
-```sh
-python3 score-adversarial.py \
-  --clean-predictions predictions/simple-test.json \
-  --adv-gold submission/data/test/addsent.jsonl \
-  --adv-predictions predictions/simple-addsent.json
-```
+| Deliverable | Location |
+| --- | --- |
+| Report | `milestones/m2/milestone2.pdf` |
+| Evaluation script and metric | `code/score.py`, `code/scoring.md` |
+| Adversarial evaluation | `code/score-adversarial.py` (described in `code/scoring.md`) |
+| Simple baseline | `code/simple-baseline.py`, `code/simple-baseline.md` |
+| Strong baseline | `code/qa/`, `code/strong-baseline.md` |
 
 ## Results so far
 

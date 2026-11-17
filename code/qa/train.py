@@ -12,18 +12,18 @@ Input:
         input_ids, attention_mask, start_positions, end_positions
 
 Train from scratch:
-    python train-strong.py
+    python code/qa/train.py
 
 Smoke test:
-    python train-strong.py --smoke-test
+    python code/qa/train.py --smoke-test
 
 Resume training:
-    python train-strong.py \
+    python code/qa/train.py \
         --resume-from-checkpoint checkpoint-500 \
         --output-dir runs/distilbert-baseline-colab
 
 Custom feature paths:
-    python train-strong.py \
+    python code/qa/train.py \
         --train-features /path/to/features/train \
         --dev-features /path/to/features/validation \
         --output-dir /path/to/output

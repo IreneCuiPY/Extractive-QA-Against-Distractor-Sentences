@@ -5,10 +5,10 @@ same candidate), or by its clean prediction if it has no attack.
 See scoring.md for details.
 
 Example:
-    python3 score-adversarial.py \
-      --clean-predictions predictions/simple-test.json \
-      --adv-gold submission/data/test/addsent.jsonl \
-      --adv-predictions predictions/simple-addsent.json
+    python3 code/score-adversarial.py \
+      --clean-predictions output/predictions/simple-test.json \
+      --adv-gold data/test/addsent.jsonl \
+      --adv-predictions output/predictions/simple-addsent.json
 """
 import argparse
 import json
@@ -128,10 +128,10 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--clean-gold", default="submission/data/test/clean.jsonl"
+        "--clean-gold", default="data/test/clean.jsonl"
     )
     parser.add_argument(
-        "--manifest", default="submission/data/split_manifest.json"
+        "--manifest", default="data/split_manifest.json"
     )
     parser.add_argument(
         "--clean-predictions", required=True,
@@ -139,7 +139,7 @@ def main():
     )
     parser.add_argument(
         "--adv-gold", required=True,
-        help="submission/data/test/addsent.jsonl or addonesent.jsonl",
+        help="data/test/addsent.jsonl or addonesent.jsonl",
     )
     parser.add_argument(
         "--adv-predictions", required=True,

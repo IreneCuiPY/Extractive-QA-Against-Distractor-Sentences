@@ -86,9 +86,9 @@ by the corresponding baseline.
 Example: evaluate the strong baseline on clean test:
 
 ```bash
-python3 score.py \
-  --gold submission/data/test/clean.jsonl \
-  --predictions predictions/strong-test.json
+python3 code/score.py \
+  --gold data/test/clean.jsonl \
+  --predictions output/predictions/strong-test.json
 ```
 
 Example output:
@@ -107,9 +107,9 @@ Example output:
 To evaluate the simple baseline on development data:
 
 ```bash
-python3 score.py \
-  --gold submission/data/dev/clean.jsonl \
-  --predictions predictions/simple-dev.json
+python3 code/score.py \
+  --gold data/dev/clean.jsonl \
+  --predictions output/predictions/simple-dev.json
 ```
 
 Example output:
@@ -179,10 +179,10 @@ We checked this script against a Python 3 port of the authors' evaluator
 AddOneSent JSON files. Both gave identical scores for the simple baseline.
 
 ```bash
-python3 score-adversarial.py \
-  --clean-predictions predictions/simple-test.json \
-  --adv-gold submission/data/test/addsent.jsonl \
-  --adv-predictions predictions/simple-addsent.json
+python3 code/score-adversarial.py \
+  --clean-predictions output/predictions/simple-test.json \
+  --adv-gold data/test/addsent.jsonl \
+  --adv-predictions output/predictions/simple-addsent.json
 ```
 
 Example output (simple baseline, AddSent):

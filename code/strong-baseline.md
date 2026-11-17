@@ -77,7 +77,7 @@ for both development and clean test predictions.
 
 ## Prediction method
 
-`predict-strong.py` uses only the question and context.
+`code/qa/predict.py` uses only the question and context.
 Reference answers and answer offsets are not used during prediction.
 
 Prediction uses the same maximum sequence length and context overlap
@@ -113,13 +113,13 @@ The existing preprocessing script reads the prepared train/dev JSONL
 files and creates `features/train` and `features/validation`:
 
 ```bash
-python prepare-features.py
+python code/qa/prepare_features.py
 ```
 
 ### Train
 
 ```bash
-python train-strong.py \
+python code/qa/train.py \
   --train-features features/train \
   --dev-features features/validation \
   --output-dir runs/distilbert-baseline
@@ -128,7 +128,7 @@ python train-strong.py \
 To resume from a saved checkpoint:
 
 ```bash
-python train-strong.py \
+python code/qa/train.py \
   --train-features features/train \
   --dev-features features/validation \
   --resume-from-checkpoint checkpoint-500 \
@@ -141,35 +141,35 @@ The commands below assume the selected checkpoint has been placed at
 `runs/distilbert-baseline-colab/checkpoint-8500`.
 
 ```bash
-python predict-strong.py \
+python code/qa/predict.py \
   --model runs/distilbert-baseline-colab/checkpoint-8500 \
-  --input submission/data/dev/clean.jsonl \
-  --output predictions/strong-dev.json
+  --input data/dev/clean.jsonl \
+  --output output/predictions/strong-dev.json
 ```
 
 ### Evaluate development predictions
 
 ```bash
-python score.py \
-  --gold submission/data/dev/clean.jsonl \
-  --predictions predictions/strong-dev.json
+python code/score.py \
+  --gold data/dev/clean.jsonl \
+  --predictions output/predictions/strong-dev.json
 ```
 
 ### Generate clean test predictions
 
 ```bash
-python predict-strong.py \
+python code/qa/predict.py \
   --model runs/distilbert-baseline-colab/checkpoint-8500 \
-  --input submission/data/test/clean.jsonl \
-  --output predictions/strong-test.json
+  --input data/test/clean.jsonl \
+  --output output/predictions/strong-test.json
 ```
 
 ### Evaluate clean test predictions
 
 ```bash
-python score.py \
-  --gold submission/data/test/clean.jsonl \
-  --predictions predictions/strong-test.json
+python code/score.py \
+  --gold data/test/clean.jsonl \
+  --predictions output/predictions/strong-test.json
 ```
 
 The prediction script automatically selects CUDA, MPS, or CPU.
@@ -177,21 +177,21 @@ A device can also be specified using `--device`.
 
 ### Adversarial evaluation (AddSent / AddOneSent)
 
-`predict-strong.py` works on any prepared JSONL file, including the
+`code/qa/predict.py` works on any prepared JSONL file, including the
 attacked rows. `score-adversarial.py` then groups them by original
 question, as described in `scoring.md`:
 
 ```bash
 for condition in addsent addonesent; do
-  python predict-strong.py \
+  python code/qa/predict.py \
     --model runs/distilbert-baseline-colab/checkpoint-8500 \
-    --input submission/data/test/$condition.jsonl \
-    --output predictions/strong-$condition.json
+    --input data/test/$condition.jsonl \
+    --output output/predictions/strong-$condition.json
 
-  python score-adversarial.py \
-    --clean-predictions predictions/strong-test.json \
-    --adv-gold submission/data/test/$condition.jsonl \
-    --adv-predictions predictions/strong-$condition.json
+  python code/score-adversarial.py \
+    --clean-predictions output/predictions/strong-test.json \
+    --adv-gold data/test/$condition.jsonl \
+    --adv-predictions output/predictions/strong-$condition.json
 done
 ```
 

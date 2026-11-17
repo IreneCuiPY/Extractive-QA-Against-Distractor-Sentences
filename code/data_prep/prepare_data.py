@@ -1,23 +1,24 @@
 """Build article-disjoint QA splits using only the downloaded, pinned sources.
 
 No model is trained or scored. Test access is limited to structural validation.
-Run: python3 scripts/prepare_data.py from the milestone1 directory.
+Run: python3 code/data_prep/prepare_data.py from the repository root.
 """
 import hashlib
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / 'submission' / 'data'
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / 'data'
 SEED = '5300-m1-2026'
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def read_source(name):
-    path = ROOT / 'source_data' / name
+    path = DATA / 'raw' / name
     manifest = json.loads((ROOT / 'references/source_manifest.json').read_text())
-    expected = next(x['sha256'] for x in manifest if x['file'] == 'source_data/'+name)
+    # Match by file name: the M1 manifest records the old source_data/ location.
+    expected = next(x['sha256'] for x in manifest if Path(x['file']).name == name)
     assert digest(path) == expected, f'Source changed: {name}'
     return json.loads(path.read_text(encoding='utf-8'))
 

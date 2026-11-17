@@ -14,8 +14,8 @@ checkpoint-*/
 *.pth
 *.bin
 
-# Training split is distributed only inside submission/data.tar.gz (82 MB)
-submission/data/train/
+# Training split is distributed only inside milestones/m1/data.tar.gz (82 MB)
+data/train/
 
 # Local credentials
 .env
